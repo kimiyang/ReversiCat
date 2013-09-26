@@ -98,7 +98,7 @@ namespace ReversiCat
             AICore ai = new AICore();
             int x;
             int y;
-            ai.MakeBestMove(out x, out y);
+            ai.MakeBestMove(out x, out y, this);
             if (x == -1 && y == -1)
             {
                 return -1;
