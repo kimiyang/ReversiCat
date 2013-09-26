@@ -1,38 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
 namespace ReversiCat
 {
-
-
-    public partial class ReversiForm : Form
+    public class Board
     {
+        public Board parent;
+        public int currentPlayer = 1;   //-1 Black player 1 White player
+        
+        public int noOfPieces = 0;
+        public int gameMode = 0; //0: Player vs Player; 1: Player vs AI
+        public int startPlayer = 0; //-1: Player; 1: AI
 
-        int currentPlayer = 1;   //-1 Black player 1 White player
-<<<<<<< HEAD
-        bool lockProcess; //not to respond to click event if current processing is not finished yet
-        int noOfPieces = 0;
-        //test test
+        public Position[,] positions = new Position[8, 8];
 
-        //sdfadsfa
-
-
-        int Mobility()
-        {
-            return 0;
-        }
-=======
->>>>>>> 5ee9c231206431d70b9e509bdf9fc47c21ce0e50
-
-        Position[,] positions = new Position[8, 8];
-
-        protected void InitilizePosition()
+        public Board()
         {
             for (int i = 0; i < 8; i++)
             {
@@ -47,136 +31,91 @@ namespace ReversiCat
             positions[3, 4].color = -1;
             positions[4, 3].color = -1;
             positions[4, 4].color = 1;
-
         }
 
-
-        public ReversiForm()
+        /// <summary>
+        /// Place a piece on (direcX, direcY)
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <returns>0: Successfully placed; 1: Game Ended; 2: No possible Move for current player</returns>
+        public int Play(int direcX, int direcY, out string result)
         {
-            InitializeComponent();
-            StatusLbl.Text = "White player start playing...";
-            InitilizePosition();
-        }
-
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = panel1.CreateGraphics();
-            // Create pen.  
-            Pen blackPen = new Pen(Color.Black, 3);
-            // Create location and size of ellipse.  
-            float x = 0.0F;
-            float y = 0.0F;
-            //float width = 150.0F;  
-            //float height = 150.0F;
-
-            int iX = 0;
-            int iY = 0;
-
-            for (int i = 0; i < 9; i++)
-            {
-                iX = 0;
-                iY = i;
-                Point p1 = new Point(iX, iY);
-                iX = 640;
-                Point p2 = new Point(iX, iY);
-                g.DrawLine(blackPen, 0, i * 80, 640, i * 80);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                iX = 0;
-                iY = i;
-                Point p1 = new Point(iX, iY);
-                iX = 640;
-                Point p2 = new Point(iX, iY);
-                g.DrawLine(blackPen, i * 80, 0, i * 80, 640);
-            }
-
-            //Draw circles
-
-            float width = 60.0F;
-            float height = 60.0F;
-
-            //g.FillEllipse
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (positions[i, j].color != 0)
-                    {
-                        g.FillEllipse(new SolidBrush(positions[i, j].color == 1 ? Color.White : Color.Black), i * 80 + 10, j * 80 + 10, width, height);
-                    }
-                }
-            }
-
-            g.Dispose();
-
-        }
-
-        private void panel1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (lockProcess)
-                return;
-            else
-                lockProcess = true;
-            Point hitPoint = new Point(e.X, e.Y);
-            int direcX = hitPoint.X / 80;
-            int direcY = hitPoint.Y / 80;
-
             if (positions[direcX, direcY].color == 0)
             {
-                if (FlipPiece(direcX, direcY, false))
+                if (FlipPiece(direcX, direcY, false, currentPlayer) != null)
                 {
-                    noOfPieces++;
-                    positions[direcX, direcY].color = currentPlayer;
-                    currentPlayer = -currentPlayer;
-                    this.Refresh();
                     if (noOfPieces == 64)
                     {
-                        EndGame();
-                        return;
+                        result = EndGame();
+                        return 1;
                     }
                 }
 
             }
-            int noPossibleMoves = GetNoPossibleMoves();
+            int noPossibleMoves = GetNoPossibleMoves(currentPlayer);
             if (noPossibleMoves == 0)
             {
                 currentPlayer = -currentPlayer;
-                
-                noPossibleMoves = GetNoPossibleMoves();
+
+                noPossibleMoves = GetNoPossibleMoves(currentPlayer);
                 if (noPossibleMoves == 0)
                 {
-                    EndGame();
-                    return;
+                    result = EndGame();
+                    return 1;
                 }
 
-                StatusLbl.Text = currentPlayer == 1 ? "No possible move for black player. White player plays again" : "No possible move for white player. Black player plays again";
+                result = currentPlayer == 1 ? "No possible move for black player. White player plays again" : "No possible move for white player. Black player plays again";
+                return 2;
             }
             else
-                StatusLbl.Text = currentPlayer == 1 ? "White player playing..." : "Black player playing...";
+            {
+                result = currentPlayer == 1 ? "White player playing..." : "Black player playing...";
+                return 0;
+            }
 
-            lockProcess = false;
         }
 
-        private int GetNoPossibleMoves()
+        public bool IsCurrentPlayerAI()
+        {
+            if (gameMode == 0)
+                return false;
+            else
+                return currentPlayer * startPlayer == 1;
+        }
+
+        public void AIPlay()
+        {
+        }
+
+        private int GetNoPossibleMoves(int player)
         {
             int result = 0;
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (positions[i, j].color == 0 && FlipPiece(i, j, true))
+                    if (positions[i, j].color == 0 && FlipPiece(i, j, true, player) != null)
                     {
-                        result ++;
+                        result++;
                     }
                 }
             }
             return result;
         }
 
+        public int ComputeScore(int player)
+        {
+            int result = 0;
+            foreach (Position pos in positions)
+            {
+                result += pos.color;
+            }
+            return player == 1 ? result : -result;
+        }
 
-        private void EndGame()
+
+        public string EndGame()
         {
             int result = 0;
             foreach (Position pos in positions)
@@ -184,23 +123,23 @@ namespace ReversiCat
                 result += pos.color;
             }
             if (result > 0)
-                StatusLbl.Text = "White player won!";
+                return "White player won!";
             else if (result < 0)
-                StatusLbl.Text = "Black player won!";
+                return "Black player won!";
             else
-                StatusLbl.Text = "Draw Game!";
+                return "Draw Game!";
         }
 
-        private bool FlipPiece(int x, int y, bool CheckOnly)
+        public Board FlipPiece(int x, int y, bool CheckOnly, int player)
         {
             List<Position> processedPosition = new List<Position>();
             List<Position> positionToFlip = new List<Position>();
             int i = 1;
             bool toFlip = false;
             //flip top left
-            while ((x- i) >= 0 && (y - i) >= 0)
+            while ((x - i) >= 0 && (y - i) >= 0)
             {
-                if (positions[x - i, y - i].color == currentPlayer)
+                if (positions[x - i, y - i].color == player)
                 {
                     toFlip = true;
                     break;
@@ -222,7 +161,7 @@ namespace ReversiCat
             //flip top right
             while ((x - i) >= 0 && (y + i) <= 7)
             {
-                if (positions[x - i, y + i].color == currentPlayer)
+                if (positions[x - i, y + i].color == player)
                 {
                     toFlip = true;
                     break;
@@ -244,7 +183,7 @@ namespace ReversiCat
             //flip bottom left 
             while ((x + i) <= 7 && (y - i) >= 0)
             {
-                if (positions[x + i, y - i].color == currentPlayer)
+                if (positions[x + i, y - i].color == player)
                 {
                     toFlip = true;
                     break;
@@ -266,7 +205,7 @@ namespace ReversiCat
             //flip bottom right
             while ((x + i) <= 7 && (y + i) <= 7)
             {
-                if (positions[x + i, y + i].color == currentPlayer)
+                if (positions[x + i, y + i].color == player)
                 {
                     toFlip = true;
                     break;
@@ -288,7 +227,7 @@ namespace ReversiCat
             //flip top
             while ((x - i) >= 0)
             {
-                if (positions[x - i, y].color == currentPlayer)
+                if (positions[x - i, y].color == player)
                 {
                     toFlip = true;
                     break;
@@ -310,7 +249,7 @@ namespace ReversiCat
             //flip bottom
             while ((x + i) <= 7)
             {
-                if (positions[x + i, y].color == currentPlayer)
+                if (positions[x + i, y].color == player)
                 {
                     toFlip = true;
                     break;
@@ -332,7 +271,7 @@ namespace ReversiCat
             //flip left
             while ((y - i) >= 0)
             {
-                if (positions[x, y - i].color == currentPlayer)
+                if (positions[x, y - i].color == player)
                 {
                     toFlip = true;
                     break;
@@ -354,7 +293,7 @@ namespace ReversiCat
             //flip top
             while ((y + i) <= 7)
             {
-                if (positions[x, y + i].color == currentPlayer)
+                if (positions[x, y + i].color == player)
                 {
                     toFlip = true;
                     break;
@@ -376,19 +315,30 @@ namespace ReversiCat
                     pos.color = currentPlayer;
             }
 
-            return positionToFlip.Count > 0;
+            Board resultBoard = null;
+            if (positionToFlip.Count > 0 && !CheckOnly)
+            {
+                noOfPieces++;
+                positions[x, y].color = currentPlayer;
+                currentPlayer = -currentPlayer;
+                resultBoard = new Board();
+                resultBoard.parent = this;
+                resultBoard.currentPlayer = this.currentPlayer;
+                resultBoard.noOfPieces = this.noOfPieces;
+                resultBoard.gameMode = this.gameMode;
+                resultBoard.startPlayer = this.startPlayer;
+                for (i = 0; i < 8; i++)
+                    for (int j = 0; j < 8; j++)
+                    {
+                        resultBoard.positions[i, j].color = this.positions[i, j].color;
+                        resultBoard.positions[i, j].weight = this.positions[i, j].weight;
+                    }
+
+            }
+            else if (positionToFlip.Count > 0 && CheckOnly)
+                resultBoard = new Board();
+            return resultBoard;
         }
 
-        private void ReversiForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
-
-
 }
