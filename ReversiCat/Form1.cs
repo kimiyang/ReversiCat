@@ -29,6 +29,13 @@ namespace ReversiCat
                 else
                     board.startPlayer = 1;
             }
+            if (board.startPlayer == 1)
+            {
+                string result;
+                board.Play(-2, -2, out result, true);
+                StatusLbl.Text = result;
+                Refresh();
+            }
         }
 
         public void radioBtn_Click(object sender, EventArgs args)
@@ -115,8 +122,18 @@ namespace ReversiCat
             string resultStatusText = "";
             int result = board.Play(direcX, direcY, out resultStatusText, false);
             StatusLbl.Text = resultStatusText;
+            if (result != -1)
+                Refresh();
+            if (board.IsCurrentPlayerAI())
+            {
+                System.Threading.Thread.Sleep(500);
+                result = board.Play(direcX, direcY, out resultStatusText, true);
+                StatusLbl.Text = resultStatusText;
+                if (result != -1)
+                    Refresh();
+            }
             lockProcess = false;
-            Refresh();
+            
         }
 
 
