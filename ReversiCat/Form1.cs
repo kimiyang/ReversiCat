@@ -113,7 +113,7 @@ namespace ReversiCat
             int direcX = hitPoint.X / 80;
             int direcY = hitPoint.Y / 80;
             string resultStatusText = "";
-            int result = board.Play(direcX, direcY, out resultStatusText);
+            int result = board.Play(direcX, direcY, out resultStatusText, false);
             StatusLbl.Text = resultStatusText;
             lockProcess = false;
             Refresh();
