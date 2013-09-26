@@ -38,8 +38,8 @@ namespace ReversiCat
         /// </summary>
         /// <param name="X"></param>
         /// <param name="Y"></param>
-        /// <returns>0: Successfully placed; 1: Game Ended; 2: No possible Move for current player</returns>
-        public int Play(int direcX, int direcY, out string result)
+        /// <returns>0: Successfully placed; 1: Game Ended; 2: No possible Move for current player; 3: Error in AI</returns>
+        public int Play(int direcX, int direcY, out string result, bool isAI)
         {
             if (positions[direcX, direcY].color == 0)
             {
@@ -71,6 +71,14 @@ namespace ReversiCat
             else
             {
                 result = currentPlayer == 1 ? "White player playing..." : "Black player playing...";
+                if (!isAI)
+                {
+                    if (AIPlay() == -1)
+                    {
+                        result = "Error: AI failed to move";
+                        return 3;
+                    }
+                }
                 return 0;
             }
 
@@ -84,8 +92,20 @@ namespace ReversiCat
                 return currentPlayer * startPlayer == 1;
         }
 
-        public void AIPlay()
+        public int AIPlay()
         {
+            string s;
+            AICore ai = new AICore();
+            int x;
+            int y;
+            ai.MakeBestMove(out x, out y);
+            if (x == -1 && y == -1)
+            {
+                return -1;
+            }
+            else
+                Play(x, y, out s,true);
+            return 0;
         }
 
         private int GetNoPossibleMoves(int player)
