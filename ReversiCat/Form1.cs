@@ -12,7 +12,7 @@ namespace ReversiCat
 
 
 
-    //wenhua created
+    //wenhua created...
     public partial class ReversiForm : Form
     {
 
