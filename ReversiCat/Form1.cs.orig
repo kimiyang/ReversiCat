@@ -17,22 +17,22 @@ namespace ReversiCat
     {
 
         int currentPlayer = 1;   //-1 Black player 1 White player
+<<<<<<< HEAD
+        Position[,] positions = new Position[8, 8];
+=======
         //test test
 
         //sdfadsfa
+>>>>>>> 69e983510bfa45bdb88160a676c6cc9f039eaece
 
 
-        int Mobility()
-        {
-            return 0;
-        }
 
-        int Evaluation()
-        {
-            return 0;
-        }
         // 
-        Position[,] positions = new Position[8, 8];
+
+
+
+
+        
 
         protected void InitilizePosition()
         {
@@ -133,11 +133,5 @@ namespace ReversiCat
         }
     }
 
-
-    public class Position
-    {
-        public int color; //0 no draw -1 black 1 white
-        public int weight;
-    }
 
 }
