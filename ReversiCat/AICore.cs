@@ -110,7 +110,7 @@ namespace ReversiCat
         public void MakeBestMove(out int X, out int Y, Board board)
         {
             this.originalBoard = board;
-            AlphaBeta(-64, 64, 0, 2, originalBoard.currentPlayer, board);
+            AlphaBeta(-64, 64, 0, 1, originalBoard.currentPlayer, board);
             X = this.bestMoveX;
             Y = this.bestMoveY;
         }
