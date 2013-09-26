@@ -67,7 +67,7 @@ namespace ReversiCat
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Board nextBoard = previousBoard.FlipPiece(i, j, false, player);
+                    Board nextBoard = previousBoard.CloneBoard().FlipPiece(i, j, false, player);
                     if (nextBoard != null)
                     {
                         int value = -AlphaBeta(-beta, -alpha, 0, depth - 1, -player, nextBoard);

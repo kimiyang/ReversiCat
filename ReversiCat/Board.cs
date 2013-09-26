@@ -41,18 +41,37 @@ namespace ReversiCat
         /// <returns>0: Successfully placed; 1: Game Ended; 2: No possible Move for current player; 3: Error in AI</returns>
         public int Play(int direcX, int direcY, out string result, bool isAI)
         {
-            if (positions[direcX, direcY].color == 0)
+            if (direcX != -2 || direcY != -2)
             {
-                if (FlipPiece(direcX, direcY, false, currentPlayer) != null)
+                if (positions[direcX, direcY].color == 0)
                 {
-                    if (noOfPieces == 64)
+                    if (FlipPiece(direcX, direcY, false, currentPlayer) != null)
                     {
-                        result = EndGame();
-                        return 1;
+                        if (noOfPieces == 64)
+                        {
+                            result = EndGame();
+                            return 1;
+                        }
                     }
-                }
+                    else if (isAI)
+                    {
+                        result = "Error: AI try to put in invalid place " + direcX.ToString() + "/" + direcY.ToString();
+                        return 3;
+                    }
+                    else
+                    {
+                        result = "";
+                        return -1;
+                    }
 
+                }
+                else if (!isAI)
+                {
+                    result = "";
+                    return -1;
+                }
             }
+            int statusCode = -1;
             int noPossibleMoves = GetNoPossibleMoves(currentPlayer);
             if (noPossibleMoves == 0)
             {
@@ -62,25 +81,26 @@ namespace ReversiCat
                 if (noPossibleMoves == 0)
                 {
                     result = EndGame();
-                    return 1;
+                    statusCode = 1;
                 }
 
                 result = currentPlayer == 1 ? "No possible move for black player. White player plays again" : "No possible move for white player. Black player plays again";
-                return 2;
+                statusCode = 2;
             }
             else
             {
                 result = currentPlayer == 1 ? "White player playing..." : "Black player playing...";
-                if (!isAI)
-                {
-                    if (AIPlay() == -1)
-                    {
-                        result = "Error: AI failed to move";
-                        return 3;
-                    }
-                }
-                return 0;
+                statusCode = 0;
             }
+            if (IsCurrentPlayerAI() && gameMode == 1 && (statusCode == 0 || statusCode == 2) && isAI)
+            {
+                if (AIPlay() == -1)
+                {
+                    result = "Error: AI failed to move";
+                    statusCode = 3;
+                }
+            }
+            return statusCode;
 
         }
 
@@ -98,7 +118,7 @@ namespace ReversiCat
             AICore ai = new AICore();
             int x;
             int y;
-            ai.MakeBestMove(out x, out y, this);
+            ai.MakeBestMove(out x, out y, this.CloneBoard());
             if (x == -1 && y == -1)
             {
                 return -1;
@@ -154,6 +174,8 @@ namespace ReversiCat
         {
             List<Position> processedPosition = new List<Position>();
             List<Position> positionToFlip = new List<Position>();
+            if (positions[x, y].color != 0)
+                return null;
             int i = 1;
             bool toFlip = false;
             //flip top left
@@ -335,28 +357,44 @@ namespace ReversiCat
                     pos.color = currentPlayer;
             }
 
-            Board resultBoard = null;
             if (positionToFlip.Count > 0 && !CheckOnly)
             {
                 noOfPieces++;
                 positions[x, y].color = currentPlayer;
                 currentPlayer = -currentPlayer;
-                resultBoard = new Board();
-                resultBoard.parent = this;
-                resultBoard.currentPlayer = this.currentPlayer;
-                resultBoard.noOfPieces = this.noOfPieces;
-                resultBoard.gameMode = this.gameMode;
-                resultBoard.startPlayer = this.startPlayer;
-                for (i = 0; i < 8; i++)
-                    for (int j = 0; j < 8; j++)
-                    {
-                        resultBoard.positions[i, j].color = this.positions[i, j].color;
-                        resultBoard.positions[i, j].weight = this.positions[i, j].weight;
-                    }
-
+                //resultBoard = new Board();
+                //resultBoard.parent = this;
+                //resultBoard.currentPlayer = this.currentPlayer;
+                //resultBoard.noOfPieces = this.noOfPieces;
+                //resultBoard.gameMode = this.gameMode;
+                //resultBoard.startPlayer = this.startPlayer;
+                //for (i = 0; i < 8; i++)
+                //    for (int j = 0; j < 8; j++)
+                //    {
+                //        resultBoard.positions[i, j].color = this.positions[i, j].color;
+                //        resultBoard.positions[i, j].weight = this.positions[i, j].weight;
+                //    }
+                return this;
             }
             else if (positionToFlip.Count > 0 && CheckOnly)
-                resultBoard = new Board();
+                return this;
+            else
+                return null;
+        }
+
+        public Board CloneBoard()
+        {
+            Board resultBoard = new Board();
+            resultBoard.currentPlayer = this.currentPlayer;
+            resultBoard.noOfPieces = this.noOfPieces;
+            resultBoard.gameMode = this.gameMode;
+            resultBoard.startPlayer = this.startPlayer;
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    resultBoard.positions[i, j].color = this.positions[i, j].color;
+                    resultBoard.positions[i, j].weight = this.positions[i, j].weight;
+                }
             return resultBoard;
         }
 
