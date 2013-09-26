@@ -88,7 +88,7 @@ namespace ReversiCat
         {
         }
 
-        private int GetNoPossibleMoves(int player)
+        public int GetNoPossibleMoves(int player)
         {
             int result = 0;
             for (int i = 0; i < 8; i++)
