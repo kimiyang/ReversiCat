@@ -1,0 +1,7 @@
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\obj\x86\Debug\ReversiCat.Properties.Resources.resources
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\obj\x86\Debug\ReversiCat.csproj.GenerateResource.Cache
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\obj\x86\Debug\ReversiCat.ReversiForm.resources
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\bin\Debug\ReversiCat.exe
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\bin\Debug\ReversiCat.pdb
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\obj\x86\Debug\ReversiCat.exe
+c:\users\wenhua\documents\visual studio 2010\Projects\ReversiCat\ReversiCat\obj\x86\Debug\ReversiCat.pdb
