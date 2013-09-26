@@ -7,9 +7,9 @@ namespace ReversiCat
 {
     class AICore
     {
-        protected const int wWeight = 1;
-        protected const int wMobility = 1;
-        protected const int MinValue = -99999;
+        protected const int W_WEIGTH = 0;
+        protected const int W_MOBILITY = 1;
+        protected const int MIN_VALUE = -99999;
 
         protected int bestMoveX;
         protected int bestMoveY;
@@ -43,9 +43,9 @@ namespace ReversiCat
         }
 
 
-        protected int Evaluation()
+        protected int Evaluation(int player)
         {
-            return wWeight * ComputeWeight() + wMobility * Mobility();
+            return W_WEIGTH * ComputeWeight() + W_MOBILITY * Mobility();
         }
 
         protected int GetFinalScore()
@@ -54,13 +54,13 @@ namespace ReversiCat
         }
 
 
-        protected int AlphaBeta(int alpha, int beta, int pass, int depth)
+        protected int AlphaBeta(int alpha, int beta, int pass, int depth, int player)
         {
             int subBestX = -1;
             int subBestY = -1;
-            int bestValue = MinValue;
+            int bestValue = MIN_VALUE;
             if (depth <= 0)
-                return Evaluation();
+                return Evaluation(player);
 
             //Try every possible position
             for( int i=0; i<8; i++ )
@@ -69,7 +69,7 @@ namespace ReversiCat
                 {
                     if (DoMove() > 0)
                     {
-                        int value = -AlphaBeta(-beta, -alpha, 0, depth - 1);
+                        int value = -AlphaBeta(-beta, -alpha, 0, depth - 1, -player);
                         UnDoMove();
 
                         if (value > beta)
@@ -87,7 +87,7 @@ namespace ReversiCat
                 }
             }
 
-            if (bestValue == MinValue)
+            if (bestValue == MIN_VALUE)
             {
                 if (pass == 0)
                 {
@@ -97,7 +97,7 @@ namespace ReversiCat
                     return GetFinalScore() * 100; 
                 }
                 DoPassMove();
-                bestValue  = -AlphaBeta(-beta, -alpha, 1, depth);
+                bestValue  = -AlphaBeta(-beta, -alpha, 1, depth,-player);
                 UnDoPassMove();
             }
 
@@ -108,6 +108,8 @@ namespace ReversiCat
 
         public void MakeBestMove(out int X, out int Y)
         {
+            int player = 0;
+            AlphaBeta(-100, 100, 0, 8, player);
             X = this.bestMoveX;
             Y = this.bestMoveY;
         }
