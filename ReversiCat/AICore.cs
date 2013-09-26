@@ -7,6 +7,10 @@ namespace ReversiCat
 {
     class AICore
     {
+
+        Board originalBoard;
+
+
         protected const int W_WEIGTH = 0;
         protected const int W_MOBILITY = 1;
         protected const int MIN_VALUE = -99999;
@@ -33,9 +37,9 @@ namespace ReversiCat
         }
 
 
-        protected int Mobility()
+        protected int Mobility(int player)
         {
-            return 0;
+            return originalBoard.GetNoPossibleMoves(player);
         }
         protected int ComputeWeight()
         {
@@ -45,16 +49,12 @@ namespace ReversiCat
 
         protected int Evaluation(int player)
         {
-            return W_WEIGTH * ComputeWeight() + W_MOBILITY * Mobility();
-        }
-
-        protected int GetFinalScore()
-        {
-            return 0;
+            return W_WEIGTH * ComputeWeight() + W_MOBILITY * Mobility(player);
         }
 
 
-        protected int AlphaBeta(int alpha, int beta, int pass, int depth, int player)
+
+        protected int AlphaBeta(int alpha, int beta, int pass, int depth, int player, Board previousBoard)
         {
             int subBestX = -1;
             int subBestY = -1;
@@ -67,10 +67,11 @@ namespace ReversiCat
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (DoMove() > 0)
+                    Board nextBoard = previousBoard.FlipPiece(i, j, false, player);
+                    if (nextBoard != null)
                     {
-                        int value = -AlphaBeta(-beta, -alpha, 0, depth - 1, -player);
-                        UnDoMove();
+                        int value = -AlphaBeta(-beta, -alpha, 0, depth - 1, -player, nextBoard);
+
 
                         if (value > beta)
                             return value;
@@ -94,11 +95,11 @@ namespace ReversiCat
                     //here may be needed to be modified
                     //since the game is over, the player can win then the weight should be
                     //very large to assure he can win
-                    return GetFinalScore() * 100; 
+                    return previousBoard.ComputeScore(player) * 100; 
                 }
-                DoPassMove();
-                bestValue  = -AlphaBeta(-beta, -alpha, 1, depth,-player);
-                UnDoPassMove();
+                //DoPassMove();
+                bestValue  = -AlphaBeta(-beta, -alpha, 1, depth,-player,previousBoard);
+                //UnDoPassMove();
             }
 
             bestMoveX = subBestX;
@@ -106,10 +107,10 @@ namespace ReversiCat
             return bestValue;
         }
 
-        public void MakeBestMove(out int X, out int Y)
+        public void MakeBestMove(out int X, out int Y, Board board)
         {
-            int player = 0;
-            AlphaBeta(-100, 100, 0, 8, player);
+            this.originalBoard = board;
+            AlphaBeta(-64, 64, 0, 2, originalBoard.currentPlayer, board);
             X = this.bestMoveX;
             Y = this.bestMoveY;
         }
