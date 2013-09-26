@@ -18,6 +18,17 @@ namespace ReversiCat
 
         int currentPlayer = 1;   //-1 Black player 1 White player
 
+
+
+        int Mobility()
+        {
+            return 0;
+        }
+
+        int Evaluation()
+        {
+            return 0;
+        }
         // 
         Position[,] positions = new Position[8, 8];
 
