@@ -17,7 +17,7 @@ namespace ReversiCat
     {
 
         int currentPlayer = 1;   //-1 Black player 1 White player
-
+        //test
 
 
         int Mobility()
