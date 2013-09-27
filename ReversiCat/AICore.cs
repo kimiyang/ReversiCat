@@ -11,9 +11,9 @@ namespace ReversiCat
         Board originalBoard;
 
 
-        protected const int W_WEIGTH = 0;
-        protected const int W_MOBILITY = 1;
-        protected const int MIN_VALUE = -99999;
+        protected  int W_WEIGTH = 1;
+        protected  int W_MOBILITY = 2;
+        protected const int MIN_VALUE = -999999;
 
         protected int bestMoveX;
         protected int bestMoveY;
@@ -41,15 +41,35 @@ namespace ReversiCat
         {
             return originalBoard.GetNoPossibleMoves(player);
         }
-        protected int ComputeWeight()
+        protected int ComputeWeight(Board board,int player)
         {
-            return 0;
+            int result = 0;
+            foreach (Position pos in board.positions)
+            {
+                result += (pos.color * pos.weight);
+            }
+            return player == 1 ? result : -result;
+
         }
 
 
-        protected int Evaluation(int player)
+        protected int Evaluation(Board board,int player)
         {
-            return W_WEIGTH * ComputeWeight() + W_MOBILITY * Mobility(player);
+            int num = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board.positions[i, j].color != 0)
+                        num++;
+                }
+            }
+            if(num > 32)
+            {
+                W_MOBILITY = 1;
+                W_WEIGTH = 2;
+            }
+            return W_WEIGTH * ComputeWeight(board,player) + W_MOBILITY * Mobility(player);
         }
 
 
@@ -60,7 +80,7 @@ namespace ReversiCat
             int subBestY = -1;
             int bestValue = MIN_VALUE;
             if (depth <= 0)
-                return Evaluation(player);
+                return Evaluation(previousBoard,player);
 
             //Try every possible position
             for( int i=0; i<8; i++ )
@@ -110,7 +130,7 @@ namespace ReversiCat
         public void MakeBestMove(out int X, out int Y, Board board)
         {
             this.originalBoard = board;
-            AlphaBeta(-64, 64, 0, 1, originalBoard.currentPlayer, board);
+            AlphaBeta(-5000, 5000, 0, 7, originalBoard.currentPlayer, board);
             X = this.bestMoveX;
             Y = this.bestMoveY;
         }

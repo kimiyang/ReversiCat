@@ -27,11 +27,72 @@ namespace ReversiCat
                 }
 
             }
-            positions[3, 3].color = 1;
-            positions[3, 4].color = -1;
-            positions[4, 3].color = -1;
-            positions[4, 4].color = 1;
+            positions[3, 3].color = -1;
+            positions[3, 4].color = 1;
+            positions[4, 3].color = 1;
+            positions[4, 4].color = -1;
+
+            DistributeWeight();
         }
+
+
+        private void DistributeWeight()
+        {
+            //Four corners
+            positions[0, 0].weight = 20;
+            positions[7, 7].weight = 20;
+            positions[0, 7].weight = 20;
+            positions[7, 0].weight = 20;
+
+            //red crosses
+            positions[0, 1].weight = 0;
+            positions[0, 6].weight = 0;
+            positions[1, 0].weight = 0;
+            positions[1, 7].weight = 0;
+            positions[6, 0].weight = 0;
+            positions[6, 7].weight = 0;
+            positions[7, 1].weight = 0;
+            positions[7, 6].weight = 0;
+
+            //black crosses
+            positions[1, 1].weight = -10;
+            positions[1, 6].weight = -10;
+            positions[6, 1].weight = -10;
+            positions[6, 6].weight = -10;
+
+            //
+            for (int i = 2; i <= 5; i++)
+            {
+                //red lines
+                positions[i, 0].weight = 8;
+                positions[i, 7].weight = 8;
+
+                //black lines
+                positions[i, 1].weight = 3;
+                positions[i, 6].weight = 3;
+
+                //green lines
+                positions[i, 2].weight = 7;
+                positions[i, 5].weight = 7;
+            }
+
+            for (int j = 2; j <= 5; j++)
+            {
+                //red lines
+                positions[0, j].weight = 8;
+                positions[7, j].weight = 8;
+
+                //black lines
+                positions[1, j].weight = 3;
+                positions[6, j].weight = 3;
+
+                //green lines
+                positions[2, j].weight = 7;
+                positions[5, j].weight = 7;
+            }
+
+        }
+
 
         /// <summary>
         /// Place a piece on (direcX, direcY)
