@@ -202,8 +202,8 @@ namespace ReversiCat
         public void MakeBestMove(out int X, out int Y, Board board)
         {
             this.originalBoard = board;
-            //AlphaBeta(-50000, 50000, 0, 6, originalBoard.currentPlayer, board);
-            PVS(-50000, 50000, 0, 8, originalBoard.currentPlayer, board);
+            AlphaBeta(-50000, 50000, 0, 6, originalBoard.currentPlayer, board);
+            //PVS(-50000, 50000, 0, 6, originalBoard.currentPlayer, board);
             X = this.bestMoveX;
             Y = this.bestMoveY;
         }
