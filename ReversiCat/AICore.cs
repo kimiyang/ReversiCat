@@ -12,7 +12,7 @@ namespace ReversiCat
 
 
         protected int W_WEIGTH = 5;
-        protected int W_SELF_MOBILITY = 2;
+        protected int W_SELF_MOBILITY = 1;
         protected int W_OPP_MOBILITY = 1;
         protected const int MIN_VALUE = -9999999;
 
@@ -56,21 +56,21 @@ namespace ReversiCat
 
         protected int Evaluation(Board board,int player)
         {
-            int num = 0;
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (board.positions[i, j].color != 0)
-                        num++;
-                }
-            }
+            //int num = 0;
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    for (int j = 0; j < 8; j++)
+            //    {
+            //        if (board.positions[i, j].color != 0)
+            //            num++;
+            //    }
+            //}
             //if(num > 10)
             //{
                 //W_MOBILITY = 1;
             //    W_WEIGTH = 3;
             //}
-            return W_WEIGTH * ComputeWeight(board, player) + W_SELF_MOBILITY * Mobility(player) - W_OPP_MOBILITY * Mobility(-player);
+            return W_WEIGTH * ComputeWeight(board, player) + W_SELF_MOBILITY * Mobility(player);// -W_OPP_MOBILITY * Mobility(-player);
         }
 
 
@@ -202,7 +202,7 @@ namespace ReversiCat
         public void MakeBestMove(out int X, out int Y, Board board)
         {
             this.originalBoard = board;
-            AlphaBeta(-50000, 50000, 0, 6, originalBoard.currentPlayer, board);
+            AlphaBeta(-50000, 50000, 0, 7, originalBoard.currentPlayer, board);
             //PVS(-50000, 50000, 0, 6, originalBoard.currentPlayer, board);
             X = this.bestMoveX;
             Y = this.bestMoveY;

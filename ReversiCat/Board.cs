@@ -67,40 +67,40 @@ namespace ReversiCat
             positions[7, 6].weight = -10;
 
             //black crosses
-            positions[1, 1].weight = -30;
-            positions[1, 6].weight = -30;
-            positions[6, 1].weight = -30;
-            positions[6, 6].weight = -30;
+            positions[1, 1].weight = -80;
+            positions[1, 6].weight = -80;
+            positions[6, 1].weight = -80;
+            positions[6, 6].weight = -80;
 
             //
             for (int i = 2; i <= 5; i++)
             {
                 //red lines
-                positions[i, 0].weight = 8;
-                positions[i, 7].weight = 8;
+                positions[i, 0].weight = 15;
+                positions[i, 7].weight = 15;
 
                 //black lines
                 positions[i, 1].weight = 3;
                 positions[i, 6].weight = 3;
 
                 //green lines
-                positions[i, 2].weight = 20;
-                positions[i, 5].weight = 20;
+                positions[i, 2].weight = 8;
+                positions[i, 5].weight = 8;
             }
 
             for (int j = 2; j <= 5; j++)
             {
                 //red lines
-                positions[0, j].weight = 8;
-                positions[7, j].weight = 8;
+                positions[0, j].weight = 15;
+                positions[7, j].weight = 15;
 
                 //black lines
                 positions[1, j].weight = 3;
                 positions[6, j].weight = 3;
 
                 //green lines
-                positions[2, j].weight = 20;
-                positions[5, j].weight = 20;
+                positions[2, j].weight = 8;
+                positions[5, j].weight = 8;
             }
 
         }
