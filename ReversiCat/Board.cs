@@ -8,11 +8,23 @@ namespace ReversiCat
     public class Board
     {
         public Board parent;
-        public int currentPlayer = 1;   //-1 Black player 1 White player
+        /// <summary>
+        /// -1 Black player 1 White player
+        /// </summary>
+        public int currentPlayer = 1;
         
-        public int noOfPieces = 0;
-        public int gameMode = 0; //0: Player vs Player; 1: Player vs AI
-        public int startPlayer = 0; //-1: Player; 1: AI
+        public int noOfPieces = 4;
+        /// <summary>
+        /// 0: Player vs Player; 1: Player vs AI
+        /// </summary>
+        public int gameMode = 0;
+        /// <summary>
+        /// -1: Player; 1: AI
+        /// </summary>
+        public int startPlayer = 0;
+
+        public int lastPlayX = -1;
+        public int lastPlayY = -1;
 
         public Position[,] positions = new Position[8, 8];
 
@@ -95,7 +107,7 @@ namespace ReversiCat
 
 
         /// <summary>
-        /// Place a piece on (direcX, direcY)
+        /// Place a piece on (direcX, direcY). (-2, -2) indicates initial play by AI
         /// </summary>
         /// <param name="X"></param>
         /// <param name="Y"></param>
@@ -108,6 +120,8 @@ namespace ReversiCat
                 {
                     if (FlipPiece(direcX, direcY, false, currentPlayer) != null)
                     {
+                        lastPlayX = direcX;
+                        lastPlayY = direcY;
                         if (noOfPieces == 64)
                         {
                             result = EndGame();
@@ -215,6 +229,20 @@ namespace ReversiCat
             return player == 1 ? result : -result;
         }
 
+        public string ComputeNoPieces()
+        {
+            int white = 0;
+            int black = 0;
+            foreach (Position pos in positions)
+            {
+                if (pos.color == 1)
+                    white++;
+                else if (pos.color == -1)
+                    black++;
+            }
+            return String.Format("White ({0}) - Black({1})", white.ToString(), black.ToString());
+        }
+
 
         public string EndGame()
         {
@@ -224,9 +252,13 @@ namespace ReversiCat
                 result += pos.color;
             }
             if (result > 0)
+            {
                 return "White player won!";
+            }
             else if (result < 0)
+            {
                 return "Black player won!";
+            }
             else
                 return "Draw Game!";
         }

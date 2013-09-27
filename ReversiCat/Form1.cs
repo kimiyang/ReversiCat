@@ -48,6 +48,7 @@ namespace ReversiCat
         {
             InitializeComponent();
             StatusLbl.Text = "White player start playing...";
+            CurrentResultLbl.Text = board.ComputeNoPieces();
             this.button1.Click += btn_Click;
             this.radioButton1.Click += radioBtn_Click;
             this.radioButton2.Click += radioBtn_Click;
@@ -61,6 +62,10 @@ namespace ReversiCat
             Graphics g = panel1.CreateGraphics();
             // Create pen.  
             Pen blackPen = new Pen(Color.Black, 3);
+            Pen redPen = new Pen(Color.Red, 2);
+            // Create brush
+            Brush blackBrush = new SolidBrush(Color.Black);
+            Brush whiteBrush = new SolidBrush(Color.White);
             // Create location and size of ellipse.  
             float x = 0.0F;
             float y = 0.0F;
@@ -101,7 +106,11 @@ namespace ReversiCat
                 {
                     if (board.positions[i, j].color != 0)
                     {
-                        g.FillEllipse(new SolidBrush(board.positions[i, j].color == 1 ? Color.White : Color.Black), i * 80 + 10, j * 80 + 10, width, height);
+                        g.FillEllipse(board.positions[i, j].color == 1 ? whiteBrush : blackBrush, i * 80 + 10, j * 80 + 10, width, height);
+                        if (i == board.lastPlayX && j == board.lastPlayY)
+                        {
+                            g.DrawEllipse(redPen, i * 80 + 9, j * 80 + 9, width + 2, height + 2);
+                        }
                     }
                 }
             }
@@ -121,14 +130,22 @@ namespace ReversiCat
             int direcY = hitPoint.Y / 80;
             string resultStatusText = "";
             int result = board.Play(direcX, direcY, out resultStatusText, false);
-            StatusLbl.Text = resultStatusText;
+            if (resultStatusText != "")
+            {
+                StatusLbl.Text = resultStatusText;
+                CurrentResultLbl.Text = board.ComputeNoPieces();
+            }
             if (result != -1)
                 Refresh();
             if (board.IsCurrentPlayerAI())
             {
                 System.Threading.Thread.Sleep(500);
                 result = board.Play(direcX, direcY, out resultStatusText, true);
-                StatusLbl.Text = resultStatusText;
+                if (resultStatusText != "")
+                {
+                    StatusLbl.Text = resultStatusText;
+                    CurrentResultLbl.Text = board.ComputeNoPieces();
+                }
                 if (result != -1)
                     Refresh();
             }
