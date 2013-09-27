@@ -10,7 +10,7 @@ namespace ReversiCat
         public Board parent;
         public int currentPlayer = 1;   //-1 Black player 1 White player
         
-        public int noOfPieces = 0;
+        public int noOfPieces = 4;
         public int gameMode = 0; //0: Player vs Player; 1: Player vs AI
         public int startPlayer = 0; //-1: Player; 1: AI
 
@@ -39,26 +39,26 @@ namespace ReversiCat
         private void DistributeWeight()
         {
             //Four corners
-            positions[0, 0].weight = 20;
-            positions[7, 7].weight = 20;
-            positions[0, 7].weight = 20;
-            positions[7, 0].weight = 20;
+            positions[0, 0].weight = 100;
+            positions[7, 7].weight = 100;
+            positions[0, 7].weight = 100;
+            positions[7, 0].weight = 100;
 
             //red crosses
-            positions[0, 1].weight = 0;
-            positions[0, 6].weight = 0;
-            positions[1, 0].weight = 0;
-            positions[1, 7].weight = 0;
-            positions[6, 0].weight = 0;
-            positions[6, 7].weight = 0;
-            positions[7, 1].weight = 0;
-            positions[7, 6].weight = 0;
+            positions[0, 1].weight = -10;
+            positions[0, 6].weight = -10;
+            positions[1, 0].weight = -10;
+            positions[1, 7].weight = -10;
+            positions[6, 0].weight = -10;
+            positions[6, 7].weight = -10;
+            positions[7, 1].weight = -10;
+            positions[7, 6].weight = -10;
 
             //black crosses
-            positions[1, 1].weight = -10;
-            positions[1, 6].weight = -10;
-            positions[6, 1].weight = -10;
-            positions[6, 6].weight = -10;
+            positions[1, 1].weight = -30;
+            positions[1, 6].weight = -30;
+            positions[6, 1].weight = -30;
+            positions[6, 6].weight = -30;
 
             //
             for (int i = 2; i <= 5; i++)
@@ -72,8 +72,8 @@ namespace ReversiCat
                 positions[i, 6].weight = 3;
 
                 //green lines
-                positions[i, 2].weight = 7;
-                positions[i, 5].weight = 7;
+                positions[i, 2].weight = 15;
+                positions[i, 5].weight = 15;
             }
 
             for (int j = 2; j <= 5; j++)
@@ -87,8 +87,8 @@ namespace ReversiCat
                 positions[6, j].weight = 3;
 
                 //green lines
-                positions[2, j].weight = 7;
-                positions[5, j].weight = 7;
+                positions[2, j].weight = 15;
+                positions[5, j].weight = 15;
             }
 
         }
