@@ -11,7 +11,7 @@ namespace ReversiCat
         /// <summary>
         /// -1 Black player 1 White player
         /// </summary>
-        public int currentPlayer = 1;
+        public int currentPlayer = -1;
         
         public int noOfPieces = 4;
         /// <summary>
@@ -30,6 +30,11 @@ namespace ReversiCat
 
         public Board()
         {
+            init();
+        }
+
+        public void init()
+        {
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -45,6 +50,10 @@ namespace ReversiCat
             positions[4, 4].color = -1;
 
             DistributeWeight();
+
+            currentPlayer = 1;
+            noOfPieces = 4;
+            lastPlayX = lastPlayY = -1;
         }
 
 
@@ -169,11 +178,17 @@ namespace ReversiCat
             }
             if (IsCurrentPlayerAI() && gameMode == 1 && (statusCode == 0 || statusCode == 2) && isAI)
             {
-                if (AIPlay() == -1)
+                statusCode = AIPlay(out result);
+                if (statusCode == -1)
                 {
                     result = "Error: AI failed to move";
                     statusCode = 3;
                 }
+                //else
+                //{
+                //    result = currentPlayer == 1 ? "White player playing..." : "Black player playing...";
+                //    statusCode = 0;
+                //}
             }
             return statusCode;
 
@@ -187,7 +202,7 @@ namespace ReversiCat
                 return currentPlayer * startPlayer == 1;
         }
 
-        public int AIPlay()
+        public int AIPlay(out string result)
         {
             string s;
             AICore ai = new AICore();
@@ -196,10 +211,11 @@ namespace ReversiCat
             ai.MakeBestMove(out x, out y, this.CloneBoard());
             if (x == -1 && y == -1)
             {
+                result = "";
                 return -1;
             }
             else
-                Play(x, y, out s,true);
+                Play(x, y, out result,true);
             return 0;
         }
 
