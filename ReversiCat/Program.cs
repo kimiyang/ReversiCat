@@ -15,7 +15,7 @@ namespace ReversiCat
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ReversiForm());
+            Application.Run(new btnRestart());
         }
     }
 }

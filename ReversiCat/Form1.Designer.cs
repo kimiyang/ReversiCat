@@ -1,6 +1,6 @@
 ﻿namespace ReversiCat
 {
-    partial class ReversiForm
+    partial class btnRestart
     {
         /// <summary>
         /// Required designer variable.
@@ -40,6 +40,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.StatusLbl = new System.Windows.Forms.Label();
             this.CurrentResultLbl = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -173,16 +174,26 @@
             this.CurrentResultLbl.TabIndex = 3;
             this.CurrentResultLbl.Text = "label3";
             // 
-            // ReversiForm
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(16, 683);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(129, 23);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "Restart Game";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // btnRestart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(672, 687);
+            this.ClientSize = new System.Drawing.Size(672, 714);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.CurrentResultLbl);
             this.Controls.Add(this.StatusLbl);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel1);
-            this.Name = "ReversiForm";
+            this.Name = "btnRestart";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.ReversiForm_Load);
             this.panel1.ResumeLayout(false);
@@ -209,6 +220,7 @@
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.Label CurrentResultLbl;
+        private System.Windows.Forms.Button button2;
     }
 }
 

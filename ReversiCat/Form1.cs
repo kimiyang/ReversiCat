@@ -11,7 +11,7 @@ namespace ReversiCat
 {
 
 
-    public partial class ReversiForm : Form
+    public partial class btnRestart : Form
     {
         private Board board = new Board();
         private bool lockProcess; //not to respond to click event if current processing is not finished yet
@@ -38,18 +38,26 @@ namespace ReversiCat
             }
         }
 
+        public void btn2_Click(object sender, EventArgs args)
+        {
+            board.init();
+            groupBox1.Visible = true;
+            Refresh();
+        }
+
         public void radioBtn_Click(object sender, EventArgs args)
         {
             panel2.Visible = radioButton2.Checked;
         }
 
 
-        public ReversiForm()
+        public btnRestart()
         {
             InitializeComponent();
             StatusLbl.Text = "White player start playing...";
             CurrentResultLbl.Text = board.ComputeNoPieces();
             this.button1.Click += btn_Click;
+            this.button2.Click += btn2_Click;
             this.radioButton1.Click += radioBtn_Click;
             this.radioButton2.Click += radioBtn_Click;
             panel2.Visible = false;
