@@ -165,7 +165,7 @@ namespace ReversiCat
                 if (noPossibleMoves == 0)
                 {
                     result = EndGame();
-                    statusCode = 1;
+                    return 1;
                 }
 
                 result = currentPlayer == 1 ? "No possible move for black player. White player plays again" : "No possible move for white player. Black player plays again";
