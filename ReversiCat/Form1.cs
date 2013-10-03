@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+
 
 namespace ReversiCat
 {
@@ -18,7 +20,11 @@ namespace ReversiCat
 
         public void btn_Click(object sender, EventArgs args)
         {
+            board.init();
             groupBox1.Visible = false;
+            panel1.Visible = true;
+            label1.Visible = StatusLbl.Visible = CurrentResultLbl.Visible = true;
+            this.saveToolStripMenuItem.Enabled = true;
             if (radioButton1.Checked)
                 board.gameMode = 0;
             else
@@ -34,15 +40,8 @@ namespace ReversiCat
                 string result;
                 board.Play(-2, -2, out result, true);
                 StatusLbl.Text = result;
-                Refresh();
             }
-        }
-
-        public void btn2_Click(object sender, EventArgs args)
-        {
-            board.init();
-            groupBox1.Visible = true;
-            Refresh();
+            this.Refresh();
         }
 
         public void radioBtn_Click(object sender, EventArgs args)
@@ -50,6 +49,76 @@ namespace ReversiCat
             panel2.Visible = radioButton2.Checked;
         }
 
+        public void newGameToolStripMenuItem_Click(object sender, EventArgs args)
+        {
+            this.groupBox1.Visible = panel1.Visible = true;
+        }
+
+        public void saveGameToolStripMenuItem_Click(object sender, EventArgs args)
+        {
+            panel3.Visible = true;
+        }
+
+        public void loadGameToolStripMenuItem_Click(object sender, EventArgs args)
+        {
+            openFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+            openFileDialog1.FileName = "";
+            openFileDialog1.ShowDialog();
+        }
+
+        public void exitGameToolStripMenuItem_Click(object sender, EventArgs args)
+        {
+            this.Close();
+        }
+
+        public void save(string filename)
+        {
+            File.WriteAllBytes(Path.GetDirectoryName(Application.ExecutablePath) + "//" + filename + ".sav", this.board.SaveToFile());
+        }
+
+        public void load(object sender, CancelEventArgs e)
+        {
+            byte[] data = File.ReadAllBytes(openFileDialog1.FileName);
+            if (board.LoadFile(data))
+            {
+                panel1.Visible = true;
+                StatusLbl.Text = board.GetCurrentGameStatusText();
+                lockProcess = false;
+                label1.Visible = StatusLbl.Visible = CurrentResultLbl.Visible = true;
+                this.saveToolStripMenuItem.Enabled = true;
+                StatusLbl.Text = board.GetCurrentGameStatusText();
+                this.Refresh();
+            }
+            else
+            {
+                MessageBox.Show("Invalid or corrupted file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void save_Click(object sender, EventArgs args)
+        {
+            if (textBox1.Text.Length > 0)
+            {
+                if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//" + textBox1.Text + ".sav"))
+                {
+                    if (MessageBox.Show("A file with the same name already exists. Do you want to overwrite?", "File Exists", MessageBoxButtons.YesNo) ==  DialogResult.Yes)
+                        save(textBox1.Text);
+                }
+                else
+                    save(textBox1.Text);
+            }
+            else
+            {
+                textBox1.Focus();
+            }
+            panel3.Visible = false;
+
+        }
+
+        public void cancel_Click(object sender, EventArgs args)
+        {
+            panel3.Visible = false;
+        }
 
         public btnRestart()
         {
@@ -57,10 +126,19 @@ namespace ReversiCat
             StatusLbl.Text = "White player start playing...";
             CurrentResultLbl.Text = board.ComputeNoPieces();
             this.button1.Click += btn_Click;
-            this.button2.Click += btn2_Click;
+            this.newGameToolStripMenuItem.Click += newGameToolStripMenuItem_Click;
+            this.saveToolStripMenuItem.Click += saveGameToolStripMenuItem_Click;
+            this.loadToolStripMenuItem.Click += loadGameToolStripMenuItem_Click;
+            this.exitToolStripMenuItem.Click += exitGameToolStripMenuItem_Click;
+            this.openFileDialog1.FileOk += load;
+            this.openFileDialog1.Filter = "Save Files(*.sav)|*.sav";
             this.radioButton1.Click += radioBtn_Click;
             this.radioButton2.Click += radioBtn_Click;
-            panel2.Visible = false;
+            this.button2.Click += save_Click;
+            this.button3.Click += cancel_Click;
+            this.saveToolStripMenuItem.Enabled = false;
+            panel2.Visible = groupBox1.Visible = panel1.Visible = panel3.Visible = false;
+            label1.Visible = StatusLbl.Visible = CurrentResultLbl.Visible = false;
             radioButton1.Select();
             radioButton3.Select();
         }
@@ -74,9 +152,6 @@ namespace ReversiCat
             // Create brush
             Brush blackBrush = new SolidBrush(Color.Black);
             Brush whiteBrush = new SolidBrush(Color.White);
-            // Create location and size of ellipse.  
-            float x = 0.0F;
-            float y = 0.0F;
             //float width = 150.0F;  
             //float height = 150.0F;
 
@@ -138,6 +213,8 @@ namespace ReversiCat
             int direcY = hitPoint.Y / 80;
             string resultStatusText = "";
             int result = board.Play(direcX, direcY, out resultStatusText, false);
+            if (result == 1)
+                this.saveToolStripMenuItem.Enabled = false;
             if (resultStatusText != "")
             {
                 StatusLbl.Text = resultStatusText;
@@ -145,10 +222,13 @@ namespace ReversiCat
             }
             if (result != -1)
                 Refresh();
+            
             if (board.IsCurrentPlayerAI())
             {
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(200);
                 result = board.Play(direcX, direcY, out resultStatusText, true);
+                if (result == 1)
+                    this.saveToolStripMenuItem.Enabled = false;
                 if (resultStatusText != "")
                 {
                     StatusLbl.Text = resultStatusText;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace ReversiCat
 {
@@ -31,6 +33,60 @@ namespace ReversiCat
         public Board()
         {
             init();
+        }
+
+        public byte[] SaveToFile()
+        {
+            int[] data = new int[134];
+            data[0] = currentPlayer;
+            data[1] = noOfPieces;
+            data[2] = gameMode;
+            data[3] = startPlayer;
+            data[4] = lastPlayX;
+            data[5] = lastPlayY;
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    data[5 + 2 * (i * 8 + j) + 1] = positions[i, j].color;
+                    data[5 + 2 * (i * 8 + j) + 2] = positions[i, j].weight;
+                }
+            byte[] result = new byte[data.Length * sizeof(int)];
+            Buffer.BlockCopy(data, 0, result, 0, result.Length);
+            return result;
+        }
+
+        public bool LoadFile(byte[] data)
+        {
+            try
+            {
+                if (data.Length != 134 * sizeof(int))
+                    return false;
+                int[] gameData = new int[134];
+
+                Buffer.BlockCopy(data, 0, gameData, 0, data.Length);
+                currentPlayer = gameData[0];
+                noOfPieces = gameData[1];
+                gameMode = gameData[2];
+                startPlayer = gameData[3];
+                lastPlayX = gameData[4];
+                lastPlayY = gameData[5];
+                for (int i = 0; i < 8; i++)
+                    for (int j = 0; j < 8; j++)
+                    {
+                        positions[i, j].color = gameData[5 + 2 * (i * 8 + j) + 1];
+                        positions[i, j].weight = gameData[5 + 2 * (i * 8 + j) + 2];
+                    }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public string GetCurrentGameStatusText()
+        {
+            return this.currentPlayer == 1 ? "White player playing..." : "Black player playing...";
         }
 
         public void init()
