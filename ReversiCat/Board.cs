@@ -30,6 +30,8 @@ namespace ReversiCat
 
         public Position[,] positions = new Position[8, 8];
 
+        private Board previousBoard;
+
         public Board()
         {
             init();
@@ -82,6 +84,22 @@ namespace ReversiCat
             {
                 return false;
             }
+        }
+
+        public void Undo()
+        {
+            this.currentPlayer = this.previousBoard.currentPlayer;
+            this.noOfPieces = this.previousBoard.noOfPieces;
+
+            this.lastPlayX = this.previousBoard.lastPlayX;
+            this.lastPlayY = this.previousBoard.lastPlayY;
+
+            for (int i = 0; i < 8; i ++)
+                for (int j = 0; j < 8; j ++)
+                {
+                    this.positions[i,j].color = this.previousBoard.positions[i,j].color;
+                    this.positions[i,j].color = this.previousBoard.positions[i,j].color;
+                }
         }
 
         public string GetCurrentGameStatusText()
@@ -183,6 +201,7 @@ namespace ReversiCat
             {
                 if (positions[direcX, direcY].color == 0)
                 {
+                    Board previous = this.CloneBoard();
                     if (FlipPiece(direcX, direcY, false, currentPlayer) != null)
                     {
                         lastPlayX = direcX;
@@ -192,6 +211,8 @@ namespace ReversiCat
                             result = EndGame();
                             return 1;
                         }
+                        if (!isAI)
+                            this.previousBoard = previous;
                     }
                     else if (isAI)
                     {

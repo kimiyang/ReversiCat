@@ -71,6 +71,13 @@ namespace ReversiCat
             this.Close();
         }
 
+        public void undoToolStripMenuItem_Click(object sender, EventArgs args)
+        {
+            board.Undo();
+            this.undoToolStripMenuItem.Enabled = false;
+            this.Refresh();
+        }
+
         public void save(string filename)
         {
             File.WriteAllBytes(Path.GetDirectoryName(Application.ExecutablePath) + "//" + filename + ".sav", this.board.SaveToFile());
@@ -130,6 +137,7 @@ namespace ReversiCat
             this.saveToolStripMenuItem.Click += saveGameToolStripMenuItem_Click;
             this.loadToolStripMenuItem.Click += loadGameToolStripMenuItem_Click;
             this.exitToolStripMenuItem.Click += exitGameToolStripMenuItem_Click;
+            this.undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             this.openFileDialog1.FileOk += load;
             this.openFileDialog1.Filter = "Save Files(*.sav)|*.sav";
             this.radioButton1.Click += radioBtn_Click;
@@ -137,6 +145,7 @@ namespace ReversiCat
             this.button2.Click += save_Click;
             this.button3.Click += cancel_Click;
             this.saveToolStripMenuItem.Enabled = false;
+            this.undoToolStripMenuItem.Enabled = false;
             panel2.Visible = groupBox1.Visible = panel1.Visible = panel3.Visible = false;
             label1.Visible = StatusLbl.Visible = CurrentResultLbl.Visible = false;
             radioButton1.Select();
@@ -235,7 +244,10 @@ namespace ReversiCat
                     CurrentResultLbl.Text = board.ComputeNoPieces();
                 }
                 if (result != -1)
+                {
                     Refresh();
+                    this.undoToolStripMenuItem.Enabled = true;
+                }
             }
             lockProcess = false;
             
