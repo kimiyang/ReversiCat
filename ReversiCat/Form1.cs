@@ -21,6 +21,7 @@ namespace ReversiCat
         public void btn_Click(object sender, EventArgs args)
         {
             board.init();
+            Console.WrinteLine("Hello");
             groupBox1.Visible = false;
             panel1.Visible = true;
             label1.Visible = StatusLbl.Visible = CurrentResultLbl.Visible = true;
